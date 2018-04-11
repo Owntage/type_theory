@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <cassert>
 #include "lambda_parser.h"
 
 using namespace std;
@@ -16,6 +17,14 @@ int main()
 											  ));
 	
 	cout << "expression: " << *expr << endl;
-	
+
+	cout << "parsedExpression: " << *LambdaExpr::parse("a b c\\y.\\x.x y") << endl;
+
+	LambdaExpr* expr1 = LambdaExpr::parse("(\\y.\\x.x (y z))");
+	LambdaExpr* expr2 = LambdaExpr::parse(expr1->toString());
+	assert(expr1->toString() == expr2->toString());
+	cout << "expression, checked for equality: " << *expr1 << endl;
+
+	cout << "all tests passed" << endl;
 	return 0;
 }

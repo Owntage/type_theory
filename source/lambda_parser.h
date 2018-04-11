@@ -40,7 +40,7 @@ struct LambdaExpr
 		}
 		if (expr.isApplication())
 		{
-			stream << "(" << *expr.left << ")(" << *expr.right << ")";
+			stream << "(" << *expr.left << ") (" << *expr.right << ")";
 		}
 		if (expr.isVariable())
 		{

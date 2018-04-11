@@ -3,6 +3,7 @@
 //
 
 #include <axe.h>
+#include <iostream>
 #include "lambda_parser.h"
 
 using namespace axe;
@@ -54,7 +55,8 @@ typedef std::string::iterator str_it;
 auto variable = r_any('a', 'z') & *(r_any('a', 'z') | r_any('0', '9'));
 r_rule<str_it> expression;
 r_rule<str_it> abstraction;
-auto atom = ('(' & expression & ')') | variable;
+r_rule<str_it> atom;
+
 auto application = r_many(atom, " ");
 
 void initExpr()
@@ -65,11 +67,12 @@ void initExpr()
 	{
 		abstraction = ~application & '\\' & variable & '.' & expression;
 		expression = abstraction | application;
+		atom = ("(" & expression & ")") | variable | ("(" & atom & ")");
 		isInitiated = true;
 	}
 }
 
-LambdaExpr* parseExpression(const std::string& str);
+LambdaExpr* parseExpression(std::string str);
 
 LambdaExpr* parseAtom(const std::string& str)
 {
@@ -83,13 +86,19 @@ LambdaExpr* parseAtom(const std::string& str)
 	return LambdaExpr::createVar(str);
 }
 
-LambdaExpr* parseApplication(const std::string& str)
+LambdaExpr* parseApplication(std::string str)
 {
 	vector<string> atoms;
 	auto atomRule = atom >> e_push_back(atoms);
 	auto applicationRule = r_many(atomRule, " ");
 
 	applicationRule(str.begin(), str.end());
+
+	if (atoms.size() == 0)
+	{
+		cout << "failed to parse string: " << str << endl;
+	}
+	//assert(atoms.size() == 0);
 
 	LambdaExpr* result = parseAtom(atoms[0]);
 	for (int i = 1; i < atoms.size(); i++)
@@ -100,7 +109,7 @@ LambdaExpr* parseApplication(const std::string& str)
 	return result;
 }
 
-LambdaExpr* parseExpression(const std::string& str)
+LambdaExpr* parseExpression(std::string str)
 {
 	if (abstraction(str.begin(), str.end()).matched)
 	{
@@ -123,6 +132,10 @@ LambdaExpr* parseExpression(const std::string& str)
 							parseExpression(innerExprStr))
 			);
 		}
+		else
+		{
+			return LambdaExpr::createAbstraction(varStr, parseExpression(innerExprStr));
+		}
 
 	}
 	else
@@ -131,7 +144,8 @@ LambdaExpr* parseExpression(const std::string& str)
 	}
 }
 
-LambdaExpr* parse(const std::string& str)
+
+LambdaExpr* LambdaExpr::parse(const std::string& str)
 {
 	initExpr();
 	return parseExpression(str);
