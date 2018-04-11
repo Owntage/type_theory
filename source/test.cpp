@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <cassert>
+#include <conio.h>
 #include "lambda_parser.h"
 
 using namespace std;
@@ -29,9 +30,30 @@ int main()
 	//substitution test
 	LambdaExpr* initExpr = LambdaExpr::parse("\\x.y y");
 	LambdaExpr* targetExpr = LambdaExpr::parse("\\x.z z");
-	initExpr->substitute("x", LambdaExpr::createVar("z"));
+	initExpr->substitute("y", LambdaExpr::createVar("z"));
 	assert (initExpr->toString() == targetExpr->toString());
 
+	//normalization test
+	initExpr = LambdaExpr::parse("(\\x.x) y");
+	targetExpr = LambdaExpr::parse("y");
+	LambdaExpr* normalizedExpr = initExpr->reduce();
+	cout << "normalization result: " << *normalizedExpr << endl;
+	assert (normalizedExpr->toString() == targetExpr->toString());
+
+	//normalization test 2
+	initExpr = LambdaExpr::parse("(\\x.\\y.y) a");
+	targetExpr = LambdaExpr::parse("\\y.y");
+	normalizedExpr = initExpr->reduce();
+	cout << "normalization result 2: " << *normalizedExpr << endl;
+	assert(targetExpr->toString() == normalizedExpr->toString());
+
+	//normalization test 3
+	initExpr = LambdaExpr::parse("(\\x.x y) ((\\z.z) a)");
+	normalizedExpr = initExpr->reduce();
+	cout << "normalization result 3: " << *normalizedExpr << endl;
+
 	cout << "all tests passed" << endl;
+	cout.flush();
+	getch();
 	return 0;
 }

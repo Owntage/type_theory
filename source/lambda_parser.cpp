@@ -48,7 +48,10 @@ LambdaExpr* LambdaExpr::substitute(std::string var, LambdaExpr* expr)
 {
 	if (isVariable())
 	{
-		*this = *expr;
+		if (value == var)
+		{
+			*this = *expr;
+		}
 	}
 	else
 	{

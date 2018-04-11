@@ -22,7 +22,7 @@ struct LambdaExpr
 	static LambdaExpr* parse(const std::string& input);
 
 	LambdaExpr();
-
+	
 	LambdaExpr* substitute(std::string var, LambdaExpr* expr);
 	LambdaExpr* reduce();
 	LambdaExpr* createCopy();
