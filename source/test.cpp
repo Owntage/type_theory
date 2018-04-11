@@ -9,6 +9,7 @@
 
 using namespace std;
 
+
 int main()
 {
 	auto expr = LambdaExpr::createAbstraction("x", 
@@ -56,12 +57,17 @@ int main()
 		normalizedExpr = normalizedExpr->reduce();
 	}
 	assert(targetExpr->toString() == normalizedExpr->toString());
-
 	cout << "normalization result 3: " << *normalizedExpr << endl;
 	cout << "normalization 3 infix: " << normalizedExpr->toInfixStr() << endl;
 
+	//normalization test 4
+	initExpr = LambdaExpr::parse("(\\f.\\x.f (f x)) (\\n.\\f.\\x.n (\\g.\\h.h (g f)) (\\u.x) (\\u.u)) (\\f.\\x.f (f (f x)))");
+	while (initExpr->isReducable())
+	{
+		initExpr = initExpr->reduce();
+	}
+	cout << "normalization result 4: " << *initExpr << endl;
+
 	cout << "all tests passed" << endl;
-	cout.flush();
-	getch();
 	return 0;
 }

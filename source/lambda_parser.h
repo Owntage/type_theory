@@ -19,7 +19,7 @@ struct LambdaExpr
 	static LambdaExpr* createApplication(LambdaExpr* left, LambdaExpr* right);
 	static LambdaExpr* createVar(std::string var);
 
-	static LambdaExpr* parse(const std::string& input);
+	static LambdaExpr* parse(std::string input);
 
 	LambdaExpr();
 

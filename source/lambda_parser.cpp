@@ -144,7 +144,8 @@ std::string LambdaExpr::toInfixStr()
 
 typedef std::string::iterator str_it;
 
-auto variable = r_any('a', 'z') & *(r_any('a', 'z') | r_any('0', '9'));
+auto variableChar = (r_any('a', 'z') | r_any('0', '9'));
+auto variable = variableChar & *variableChar;
 r_rule<str_it> expression;
 r_rule<str_it> abstraction;
 r_rule<str_it> atom;
@@ -168,6 +169,7 @@ LambdaExpr* parseExpression(std::string str);
 
 LambdaExpr* parseAtom(const std::string& str)
 {
+
 	if (str[0] == '(' && str.back() == ')')
 	{
 		std::string exprStr = str;
@@ -180,6 +182,8 @@ LambdaExpr* parseAtom(const std::string& str)
 
 LambdaExpr* parseApplication(std::string str)
 {
+	std::cout << "parsing appl" << std::endl;
+
 	vector<string> atoms;
 	auto atomRule = atom >> e_push_back(atoms);
 	auto applicationRule = r_many(atomRule, " ");
@@ -199,6 +203,7 @@ LambdaExpr* parseApplication(std::string str)
 
 LambdaExpr* parseExpression(std::string str)
 {
+	std::cout << "parsing..." << std::endl;
 	if (abstraction(str.begin(), str.end()).matched)
 	{
 		string appStr;
@@ -233,8 +238,12 @@ LambdaExpr* parseExpression(std::string str)
 }
 
 
-LambdaExpr* LambdaExpr::parse(const std::string& str)
+LambdaExpr* LambdaExpr::parse(std::string str)
 {
 	initExpr();
+	auto inputRule = expression & r_end();
+	std::cout << "started checking input grammar" << std::endl;
+	assert(inputRule(str.begin(), str.end()).matched);
+	std::cout << "finished checking input grammar" << std::endl;
 	return parseExpression(str);
 }
