@@ -3,7 +3,6 @@
 //
 
 #include <axe.h>
-#include <vector>
 #include "lambda_parser.h"
 
 using namespace axe;
@@ -54,6 +53,7 @@ typedef std::string::iterator str_it;
 
 auto variable = r_any('a', 'z') & *(r_any('a', 'z') | r_any('0', '9'));
 r_rule<str_it> expression;
+r_rule<str_it> abstraction;
 auto atom = ('(' & expression & ')') | variable;
 auto application = r_many(atom, " ");
 
@@ -63,7 +63,8 @@ void initExpr()
 
 	if (!isInitiated)
 	{
-		expression = ~application & '\\' & variable & '.' & expression;
+		abstraction = ~application & '\\' & variable & '.' & expression;
+		expression = abstraction | application;
 		isInitiated = true;
 	}
 }
@@ -84,12 +85,31 @@ LambdaExpr* parseAtom(const std::string& str)
 
 LambdaExpr* parseApplication(const std::string& str)
 {
+	vector<string> atoms;
+	auto atomRule = atom >> e_push_back(atoms);
+	auto applicationRule = r_many(atomRule, " ");
 
+	applicationRule(str.begin(), str.end());
+
+	LambdaExpr* result = parseAtom(atoms[0]);
+	for (int i = 1; i < atoms.size(); i++)
+	{
+		result = LambdaExpr::createApplication(result, parseAtom(atoms[i]));
+	}
+
+	return result;
 }
 
 LambdaExpr* parseExpression(const std::string& str)
 {
-
+	if (abstraction(str.begin(), str.end()).matched)
+	{
+		//todo: implement
+	}
+	else
+	{
+		return parseApplication(str);
+	}
 }
 
 LambdaExpr* parse(const std::string& str)
