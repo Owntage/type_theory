@@ -3,6 +3,7 @@
 //
 
 #include <axe.h>
+#include <map>
 #include <iostream>
 #include "lambda_parser.h"
 
@@ -43,7 +44,7 @@ LambdaExpr* LambdaExpr::createVar(std::string var)
 	return result;
 }
 
-void LambdaExpr::substitute(std::string var, LambdaExpr* expr)
+LambdaExpr* LambdaExpr::substitute(std::string var, LambdaExpr* expr)
 {
 	if (isVariable())
 	{
@@ -61,6 +62,53 @@ void LambdaExpr::substitute(std::string var, LambdaExpr* expr)
 			right->substitute(var, expr);
 		}
 	}
+	return this;
+}
+
+LambdaExpr* LambdaExpr::createCopy()
+{
+	LambdaExpr* res = new LambdaExpr(*this);
+	if (left != nullptr) res->left = left->createCopy();
+	if (right != nullptr) res->right = right->createCopy();
+
+	return res;
+}
+
+map<string, LambdaExpr*> reductionCache;
+
+LambdaExpr* LambdaExpr::reduce()
+{
+	string exprStr = toString();
+	if (reductionCache.find(exprStr) != reductionCache.end())
+	{
+		return reductionCache[exprStr];
+	}
+
+	LambdaExpr* res;
+	if (isApplication())
+	{
+		if (left->isAbstraction())
+		{
+			res = left->left->createCopy()->substitute(left->value, right);
+			reductionCache[exprStr] = res;
+			return res;
+		}
+		else
+		{
+			res = createApplication(left->reduce(), right->reduce())->reduce();
+			reductionCache[exprStr] = res;
+			return res;
+		}
+	}
+	if (isVariable())
+	{
+		return this;
+	}
+	if (isAbstraction())
+	{
+		return createAbstraction(value, left->reduce());
+	}
+
 }
 
 std::string LambdaExpr::toString()

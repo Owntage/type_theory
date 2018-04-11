@@ -23,8 +23,9 @@ struct LambdaExpr
 
 	LambdaExpr();
 
-	void substitute(std::string var, LambdaExpr* expr);
+	LambdaExpr* substitute(std::string var, LambdaExpr* expr);
 	LambdaExpr* reduce();
+	LambdaExpr* createCopy();
 	std::string toString();
 
 	bool isAbstraction() const { return _isAbstraction; }
