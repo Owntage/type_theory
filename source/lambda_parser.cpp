@@ -85,10 +85,11 @@ LambdaExpr* LambdaExpr::substitute(std::string var, LambdaExpr* expr)
 	{
 		if (isAbstraction())
 		{
-			set<string> freeVars = left->getFreeVariables();
+			set<string> freeVars = expr->getFreeVariables();
 			if (freeVars.find(value) != freeVars.end())
 			{
-				left->substitute(value, createVar(value + to_string(counter++)));
+				expr = expr->createCopy();
+				expr->substitute(value, createVar(value + to_string(counter++)));
 			}
 
 			left->substitute(var, expr);

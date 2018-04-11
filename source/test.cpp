@@ -69,6 +69,9 @@ int main()
 	}
 	cout << "normalization result 4: " << *initExpr << endl;
 
+	
+
 	cout << "all tests passed" << endl;
+	getch();
 	return 0;
 }
