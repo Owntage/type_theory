@@ -69,7 +69,10 @@ int main()
 	}
 	cout << "normalization result 4: " << *initExpr << endl;
 
-	
+	//normalization test 5
+	initExpr = LambdaExpr::parse("\\10.((\\11.((\\12.((11)))))) x y z");
+	initExpr = initExpr->reduce();
+	std::cout << "normalization resut 5:: " << *initExpr << std::endl;
 
 	cout << "all tests passed" << endl;
 	getch();

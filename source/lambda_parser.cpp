@@ -179,6 +179,8 @@ std::string LambdaExpr::toInfixStr()
 
 typedef std::string::iterator str_it;
 
+//variable | (*r_str("!") & "(" & implication & ")") | ("(" & implication & ")") | (*r_str("!") & variable)
+
 auto variableChar = (r_any('a', 'z') | r_any('0', '9'));
 auto variable = variableChar & *variableChar;
 r_rule<str_it> expression;
