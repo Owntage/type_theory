@@ -20,7 +20,7 @@ struct LambdaExpr
 	static LambdaExpr* createVar(std::string var);
 
 	static LambdaExpr* parse(const std::string& input);
-	
+
 	void substitute(std::string var, LambdaExpr* expr);
 	LambdaExpr* reduce();
 	std::string toString();

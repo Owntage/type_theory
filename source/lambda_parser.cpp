@@ -7,9 +7,9 @@
 LambdaExpr* LambdaExpr::createAbstraction(std::string var, LambdaExpr* expr)
 {
 	LambdaExpr* result = new LambdaExpr();
-	result->var = var;
+	result->value = var;
 	result->left = expr;
-	result->isAbstraction = true;
-	result->isApplication = false;
+	result->_isAbstraction = true;
+	result->_isApplication = false;
 }
 
