@@ -28,12 +28,14 @@ LambdaExpr* LambdaExpr::createApplication(LambdaExpr* left, LambdaExpr* right)
 	result->right = right;
 	result->_isAbstraction = false;
 	result->_isApplication = true;
+	return result;
 }
 
 LambdaExpr* LambdaExpr::createVar(std::string var)
 {
 	LambdaExpr* result = new LambdaExpr();
-
+	result->value = var;
+	return result;
 }
 
 std::string LambdaExpr::toString()

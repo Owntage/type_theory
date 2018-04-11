@@ -27,12 +27,12 @@ struct LambdaExpr
 	LambdaExpr* reduce();
 	std::string toString();
 
-	bool isAbstraction() { return _isAbstraction; }
-	bool isApplication() { return _isApplication; }
-	bool isVariable() { return !isAbstraction() && !isApplication(); }
+	bool isAbstraction() const { return _isAbstraction; }
+	bool isApplication() const { return _isApplication; }
+	bool isVariable() const { return !isAbstraction() && !isApplication(); }
 
 	template<typename Stream>
-	static Stream& operator<<(Stream& stream, LambdaExpr expr)
+	friend Stream& operator<<(Stream& stream, const LambdaExpr& expr)
 	{
 		if (expr.isAbstraction())
 		{
@@ -42,6 +42,11 @@ struct LambdaExpr
 		{
 			stream << "(" << *expr.left << ")(" << *expr.right << ")";
 		}
+		if (expr.isVariable())
+		{
+			stream << expr.value;
+		}
+		return stream;
 	}
 
 private:
