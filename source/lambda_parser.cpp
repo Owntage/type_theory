@@ -43,6 +43,26 @@ LambdaExpr* LambdaExpr::createVar(std::string var)
 	return result;
 }
 
+void LambdaExpr::substitute(std::string var, LambdaExpr* expr)
+{
+	if (isVariable())
+	{
+		*this = *expr;
+	}
+	else
+	{
+		if (isAbstraction())
+		{
+			left->substitute(var, expr);
+		}
+		else
+		{
+			left->substitute(var, expr);
+			right->substitute(var, expr);
+		}
+	}
+}
+
 std::string LambdaExpr::toString()
 {
 	std::stringstream s;
@@ -94,11 +114,7 @@ LambdaExpr* parseApplication(std::string str)
 
 	applicationRule(str.begin(), str.end());
 
-	if (atoms.size() == 0)
-	{
-		cout << "failed to parse string: " << str << endl;
-	}
-	//assert(atoms.size() == 0);
+	assert(atoms.size() > 0);
 
 	LambdaExpr* result = parseAtom(atoms[0]);
 	for (int i = 1; i < atoms.size(); i++)
