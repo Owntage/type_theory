@@ -6,7 +6,7 @@
 #define MATH_LOGIC_HW_LAMBDA_PARSER_H
 
 #include <string>
-
+#include "lambda_parser.h"
 
 struct LambdaExpr
 {
@@ -14,28 +14,42 @@ struct LambdaExpr
 	LambdaExpr* left;
 	LambdaExpr* right;
 
-	static LambdaExpr* createAbstraction(std::string value, LambdaExpr* expr)
+	static LambdaExpr* createAbstraction(std::string var, LambdaExpr* expr);
+	static LambdaExpr* createApplication(LambdaExpr* left, LambdaExpr* right);
+	static LambdaExpr* createVar(std::string var);
+
+	static LambdaExpr* parse(const std::string& input);
+
+	template<typename Stream>
+	static Stream& operator<<(Stream& stream, LambdaExpr expr)
 	{
-		LambdaExpr* result = new LambdaExpr();
-		result->value = value;
-		result->left = expr;
-		result->isAbstraction = true;
-		result->isApplication = false;
+
 	}
 
-	static LambdaExpr* createApplication(LambdaExpr* left, LambdaExpr* right)
+	void substitute(std::string var, LambdaExpr* expr);
+	LambdaExpr* reduce();
+
+
+
+	bool isAbstraction()
 	{
-		LambdaExpr* result = new LambdaExpr();
+		return _isAbstraction;
+	}
+
+	bool isApplication()
+	{
+		return _isApplication;
+	}
+
+	bool isVariable()
+	{
+		return !isAbstraction() && !isApplication();
 	}
 
 private:
-	bool isAbstraction;
-	bool isApplication;
+	bool _isAbstraction;
+	bool _isApplication;
 };
 
-namespace LambdaCalculus
-{
-
-}
 
 #endif //MATH_LOGIC_HW_LAMBDA_PARSER_H
