@@ -2,7 +2,12 @@
 // Created by Owntage on 4/10/2018.
 //
 
+#include <axe.h>
+#include <vector>
 #include "lambda_parser.h"
+
+using namespace axe;
+using namespace std;
 
 LambdaExpr::LambdaExpr() :
 	_isAbstraction(false),
@@ -45,5 +50,50 @@ std::string LambdaExpr::toString()
 	return s.str();
 }
 
+typedef std::string::iterator str_it;
 
+auto variable = r_any('a', 'z') & *(r_any('a', 'z') | r_any('0', '9'));
+r_rule<str_it> expression;
+auto atom = ('(' & expression & ')') | variable;
+auto application = r_many(atom, " ");
 
+void initExpr()
+{
+	static bool isInitiated = false;
+
+	if (!isInitiated)
+	{
+		expression = ~application & '\\' & variable & '.' & expression;
+		isInitiated = true;
+	}
+}
+
+LambdaExpr* parseExpression(const std::string& str);
+
+LambdaExpr* parseAtom(const std::string& str)
+{
+	if (str[0] == '(' && str.back() == ')')
+	{
+		std::string exprStr = str;
+		exprStr = exprStr.substr(1);
+		exprStr.pop_back();
+		return parseExpression(exprStr);
+	}
+	return LambdaExpr::createVar(str);
+}
+
+LambdaExpr* parseApplication(const std::string& str)
+{
+
+}
+
+LambdaExpr* parseExpression(const std::string& str)
+{
+
+}
+
+LambdaExpr* parse(const std::string& str)
+{
+	initExpr();
+	return parseExpression(str);
+}
