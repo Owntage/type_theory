@@ -79,13 +79,27 @@ LambdaExpr* LambdaExpr::createCopy()
 
 map<string, LambdaExpr*> reductionCache;
 
+bool LambdaExpr::isReducable()
+{
+	if (isApplication() && left->isAbstraction()) return true;
+	if (isVariable()) return false;
+	if (isAbstraction()) return left->isReducable();
+	if (isApplication())
+	{
+		return left->isReducable() || right->isReducable();
+	}
+	assert(false); //should not be reached
+	return false;
+}
+
 LambdaExpr* LambdaExpr::reduce()
 {
-	string exprStr = toString();
-	if (reductionCache.find(exprStr) != reductionCache.end())
-	{
-		return reductionCache[exprStr];
-	}
+	if (!isReducable()) return this;
+	//string exprStr = toString();
+	//if (reductionCache.find(exprStr) != reductionCache.end())
+	//{
+	//	return reductionCache[exprStr];
+	//}
 
 	LambdaExpr* res;
 	if (isApplication())
@@ -93,19 +107,19 @@ LambdaExpr* LambdaExpr::reduce()
 		if (left->isAbstraction())
 		{
 			res = left->left->createCopy()->substitute(left->value, right);
-			reductionCache[exprStr] = res;
+			//reductionCache[exprStr] = res;
 			return res;
 		}
 		else
 		{
 			res = createApplication(left->reduce(), right->reduce())->reduce();
-			reductionCache[exprStr] = res;
+			//reductionCache[exprStr] = res;
 			return res;
 		}
 	}
 	if (isVariable())
 	{
-		return this;
+		return createCopy();
 	}
 	if (isAbstraction())
 	{
@@ -119,6 +133,13 @@ std::string LambdaExpr::toString()
 	std::stringstream s;
 	s << *this;
 	return s.str();
+}
+
+std::string LambdaExpr::toInfixStr()
+{
+	if (isAbstraction()) return "abs(" + left->toInfixStr() + ")";
+	if (isApplication()) return "app(" + left->toInfixStr()+ ", " + right->toInfixStr() + ")";
+	if (isVariable()) return value;
 }
 
 typedef std::string::iterator str_it;

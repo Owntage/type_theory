@@ -38,7 +38,7 @@ int main()
 	targetExpr = LambdaExpr::parse("y");
 	LambdaExpr* normalizedExpr = initExpr->reduce();
 	cout << "normalization result: " << *normalizedExpr << endl;
-	assert (normalizedExpr->toString() == targetExpr->toString());
+	assert(normalizedExpr->toString() == targetExpr->toString());
 
 	//normalization test 2
 	initExpr = LambdaExpr::parse("(\\x.\\y.y) a");
@@ -50,7 +50,15 @@ int main()
 	//normalization test 3
 	initExpr = LambdaExpr::parse("(\\x.x y) ((\\z.z) a)");
 	normalizedExpr = initExpr->reduce();
+	targetExpr = LambdaExpr::parse("a y");
+	while (normalizedExpr->isReducable())
+	{
+		normalizedExpr = normalizedExpr->reduce();
+	}
+	assert(targetExpr->toString() == normalizedExpr->toString());
+
 	cout << "normalization result 3: " << *normalizedExpr << endl;
+	cout << "normalization 3 infix: " << normalizedExpr->toInfixStr() << endl;
 
 	cout << "all tests passed" << endl;
 	cout.flush();

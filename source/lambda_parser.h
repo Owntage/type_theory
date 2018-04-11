@@ -22,11 +22,13 @@ struct LambdaExpr
 	static LambdaExpr* parse(const std::string& input);
 
 	LambdaExpr();
-	
+
+	bool isReducable();
 	LambdaExpr* substitute(std::string var, LambdaExpr* expr);
 	LambdaExpr* reduce();
 	LambdaExpr* createCopy();
 	std::string toString();
+	std::string toInfixStr();
 
 	bool isAbstraction() const { return _isAbstraction; }
 	bool isApplication() const { return _isApplication; }
