@@ -44,6 +44,33 @@ LambdaExpr* LambdaExpr::createVar(std::string var)
 	return result;
 }
 
+set<string> LambdaExpr::getFreeVariables()
+{
+	if (isVariable())
+	{
+		set<string> result;
+		result.insert(value);
+		return result;
+	}
+	if (isAbstraction())
+	{
+		set<string> result = left->getFreeVariables();
+		result.erase(value);
+		return result;
+	}
+	if (isApplication())
+	{
+		set<string> result = left->getFreeVariables();
+		set<string> result2 = right->getFreeVariables();
+		for (auto it = result2.begin(); it != result2.end(); it++)
+		{
+			result.insert(*it);
+		}
+		return result;
+	}
+	assert (false);
+}
+
 LambdaExpr* LambdaExpr::substitute(std::string var, LambdaExpr* expr)
 {
 	if (isVariable())

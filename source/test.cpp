@@ -62,6 +62,7 @@ int main()
 
 	//normalization test 4
 	initExpr = LambdaExpr::parse("(\\f.\\x.f (f x)) (\\n.\\f.\\x.n (\\g.\\h.h (g f)) (\\u.x) (\\u.u)) (\\f.\\x.f (f (f x)))");
+	std::cout << "reducing: " << std::endl;
 	while (initExpr->isReducable())
 	{
 		initExpr = initExpr->reduce();

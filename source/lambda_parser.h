@@ -7,6 +7,7 @@
 
 #include <string>
 #include <sstream>
+#include <set>
 #include "lambda_parser.h"
 
 struct LambdaExpr
@@ -29,6 +30,7 @@ struct LambdaExpr
 	LambdaExpr* createCopy();
 	std::string toString();
 	std::string toInfixStr();
+	std::set<std::string> getFreeVariables();
 
 	bool isAbstraction() const { return _isAbstraction; }
 	bool isApplication() const { return _isApplication; }
