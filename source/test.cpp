@@ -21,7 +21,7 @@ int main()
 	cout << "parsedExpression: " << *LambdaExpr::parse("a b c\\y.\\x.x y") << endl;
 
 	//parsing test
-	LambdaExpr* expr1 = LambdaExpr::parse("(\\y.\\x.x (y z))");
+	LambdaExpr* expr1 = LambdaExpr::parse("(\\f.\\x.f (f x)) (\\n.\\f.\\x.n (\\g.\\h.h (g f)) (\\u.x) (\\u.u)) (\\f.\\x.f (f (f x)))");
 	LambdaExpr* expr2 = LambdaExpr::parse(expr1->toString());
 	assert(expr1->toString() == expr2->toString());
 	cout << "expression, checked for equality: " << *expr1 << endl;
