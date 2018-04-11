@@ -24,7 +24,7 @@ int main()
 					std::istreambuf_iterator<char>());
 
 
-	LambdaExpr* expr = LambdaExpr::parse(str);
+	LambdaExpr* expr = LambdaExpr::parse2(str);
 	while (expr->isReducable())
 	{
 		expr = expr->reduce();

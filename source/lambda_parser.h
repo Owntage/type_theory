@@ -22,6 +22,8 @@ struct LambdaExpr
 
 	static LambdaExpr* parse(std::string input);
 
+	static LambdaExpr* parse2(std::string input);
+
 	LambdaExpr();
 
 	bool isReducable();

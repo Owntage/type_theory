@@ -75,6 +75,13 @@ int main()
 	std::cout << "normalization resut 5:: " << *initExpr << std::endl;
 
 	cout << "all tests passed" << endl;
+
+
+	//parse2 test:
+
+	initExpr = LambdaExpr::parse2("\\x.x x");
+	cout << "parse2: " <<  initExpr->toInfixStr() << endl;
+
 	getch();
 	return 0;
 }

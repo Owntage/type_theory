@@ -284,3 +284,81 @@ LambdaExpr* LambdaExpr::parse(std::string str)
 	std::cout << "finished checking input grammar" << std::endl;
 	return parseExpression(str);
 }
+
+
+LambdaExpr* LambdaExpr::parse2(std::string s)
+{
+	int i = 0;
+	LambdaExpr* expression = nullptr;
+	LambdaExpr* tmp;
+	while (i < s.length())
+	{
+		if (s[i] >= L'a' && s[i] <= L'z')
+		{
+			int j = i + 1;
+			while (s[j] >= L'a' && s[j] <= L'z' || s[j] == L'\'' || s[j] >= L'0' && s[j] <= L'9')
+			{
+				j++;
+			}
+			tmp = createVar(s.substr(i, j - i));
+			if (expression == nullptr)
+			{
+				expression = tmp;
+			}
+			else
+			{
+				expression = createApplication(expression, tmp);
+			}
+			i = j;
+		}
+		else if (s[i] == L'\\')
+		{
+			int j = i + 1;
+			while (s[j] != L'.')
+			{
+				j++;
+			}
+			LambdaExpr* tempVar3 = createAbstraction(s.substr(i + 1, j - (i + 1)), parse2(s.substr(j+1)));
+			tmp = tempVar3;
+			if (expression == nullptr)
+			{
+				return tmp;
+			}
+			else
+			{
+				LambdaExpr* tempVar4 = createApplication(expression, tmp);
+				expression = tempVar4;
+			}
+			return expression;
+		}
+		else if (s[i] == L'(')
+		{
+			int j = i + 1;
+			int b = 1;
+			while (b > 0)
+			{
+				if (s[j] == L'(')
+				{
+					b++;
+				}
+				else if (s[j] == L')')
+				{
+					b--;
+				}
+				j++;
+			}
+			if (expression == nullptr)
+			{
+				expression = parse2(s.substr(i + 1, (j - 1) - (i + 1)));
+			}
+			else
+			{
+				LambdaExpr* tempVar5 = createApplication(expression, parse2(s.substr(i + 1, (j - 1) - (i + 1))));
+				expression = tempVar5;
+			}
+			i = j;
+		}
+		i++;
+	}
+	return expression;
+}
