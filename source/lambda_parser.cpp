@@ -104,7 +104,26 @@ LambdaExpr* parseExpression(const std::string& str)
 {
 	if (abstraction(str.begin(), str.end()).matched)
 	{
-		//todo: implement
+		string appStr;
+		string varStr;
+		auto applicationRule = application >> appStr;
+		auto variableRule = variable >> varStr;
+
+		auto rule = ~applicationRule & "\\" & variableRule & ".";
+		auto matchRes = rule(str.begin(), str.end());
+
+		string innerExprStr(matchRes.position, str.end());
+
+		if (appStr.size() > 0)
+		{
+			return LambdaExpr::createApplication(
+					parseApplication(appStr),
+					LambdaExpr::createAbstraction(
+							varStr,
+							parseExpression(innerExprStr))
+			);
+		}
+
 	}
 	else
 	{
