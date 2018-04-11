@@ -11,5 +11,8 @@ LambdaExpr* LambdaExpr::createAbstraction(std::string var, LambdaExpr* expr)
 	result->left = expr;
 	result->_isAbstraction = true;
 	result->_isApplication = false;
+	return result;
 }
+
+
 
